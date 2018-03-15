@@ -1,0 +1,25 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Terraform template
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+### Packer template
+# Cache objects
+packer_cache/
+
+# For built boxes
+*.box
+
+### Any Certs that were generated
+*.pem
+*.pub
+
+/hosted-zone.json
+/aws/k8-sub-domain.json
+
