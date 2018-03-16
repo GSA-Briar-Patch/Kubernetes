@@ -19,6 +19,7 @@ export NODE_TYPE=t2.large
 export MASTER_TYPE=t2.large
 export AWS_DEFAULT_PROFILE=kops
 export KUBERNETES_VERSION="1.8.8"
+export SECURE_OS="ami-0073b07d"
 
 export STAGE=production
 export DNS_ZONE=solveblock.org # Change it to your domain
@@ -105,18 +106,19 @@ function begin_cluster_plan {
     --node-count=$NODE_COUNT \
     --zones=$NODE_ZONE \
     --master-zones=$MASTER_ZONE \
-    --dns-zone=$DNS_ZONE \
     --node-size=$NODE_TYPE \
     --master-size=$MASTER_TYPE \
     --topology=private \
+    --image=$SECURE_OS \
     --dns=Public \
     --networking=calico \
-    --bastion \
     --cloud-labels="${NAME}:billing=infra__mt__kubernetes,Environment=${STAGE}" \
     --ssh-public-key=${PUBKEY} \
     --authorization=RBAC \
     --out=terraform/${STAGE} \
     $NAME
+
+    #        --dns-zone=$DNS_ZONE \
     #    Having problems with terraform and DNS
     #    --out=terraform/${STAGE} \
     #    --target=terraform \
@@ -141,15 +143,13 @@ function begin_cluster_KOPS_build {
 
 
 function begin_cluster_terraform_build {
-
+  cd terraform/${STAGE}
   terraform init -input=false
   terraform plan -input=false -out ./create-cluster.plan
   #terraform show ./create-cluster.plan | less -R # final review
   terraform apply ./create-cluster.plan # fire
   #kops validate cluster
 }
-
-
 
 getSubDomain() {
 
@@ -160,12 +160,16 @@ getSubDomain() {
 }
 
 createSubdomain() {
+if dig +short $NAME soa 2>&1 | grep -q 'awsdns-hostmaster.amazon.com';
+    then
+        echo "you have a subdomain NS"
+    else
     # From https://github.com/sasikumar-sugumar/AWS-Install-Kubernetes-Kops-Shell-Script/blob/master/Install-Kubernetes.sh
     # Need to add the Subdomain for KOPS/Terraform
     # https://github.com/kubernetes/kops/blob/master/docs/aws.md#configure-dns
 	rm -rf $HOSTED_ZONE_FILE
 	ID=$(uuidgen) && aws route53 create-hosted-zone --name $NAME --caller-reference $ID >> $HOSTED_ZONE_FILE
-
+  fi
 }
 
 createResourceRecordSet() {
@@ -220,7 +224,7 @@ function cfg_cluster {
    #kops update cluster production.styx.red --state=s3://${KOPS_STATE_STORE} --yes
   kops validate cluster --state=$KOPS_STATE_STORE
   kops rolling-update cluster $NAME --state=$KOPS_STATE_STORE --yes
-  begin_cluster_terraform_build
+  #begin_cluster_terraform_build
 }
 
 clean() {
@@ -231,6 +235,9 @@ clean() {
     rm -rf "${PUBKEY}"
 	rm -rf $K8_SUB_DOMAIN_ENV
 	rm -rf $KOPS_HOME/k8-sub-domain-updated.json
+    aws s3 rb ${KOPS_STATE_STORE} --force
+    aws s3 rb s3://${TF_STATE_STORE} --force
+    aws s3 rb s3://${K8S_CONFIG_STORE} --force
 }
 
 
@@ -262,7 +269,7 @@ drawMenu() {
 
 	# Set a foreground colour using ANSI escape
 	tput setaf 3
-	echo "Brair Patch"
+	echo "Brair Patch Script Aid"
 	tput sgr0
 
 	tput cup 5 17
@@ -316,6 +323,8 @@ case $choice in
 		create_new_keypair
 		begin_cluster_plan
 		begin_cluster_KOPS_build
+		# Having issue with terraform builds not configuring DNS*.
+		#begin_cluster_terraform_build
 		#begin_cluster_build
         #kops update cluster $NAME --state=s3://${KOPS_STATE_STORE} --yes
 		echo "#########################"
