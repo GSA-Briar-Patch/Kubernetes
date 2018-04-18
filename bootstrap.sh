@@ -8,21 +8,39 @@
 
 ###################################################
 
+scriptname=$(basename "$0")
+scriptbuildnum="0.0.1"
+scriptbuilddate="2018-04-18"
+
+displayVer() {
+  echo -e "${scriptname}  ver ${scriptbuildnum} - ${scriptbuilddate}"
+}
+
+while getopts ":i:ahv" arg; do
+  case "${arg}" in
+    a)  SECUREAMI='ami-9e9231e1';;
+    i)  VERSION=${OPTARG};;
+    n)  K8SNAME='joke';;
+    h)  usage x; exit;;
+    v)  displayVer; exit;;
+    \?) echo -e "Error - Invalid option: $OPTARG"; usage; exit;;
+    :)  echo "Error - $OPTARG requires an argument"; usage; exit 1;;
+  esac
+done
+
 # Environment values
 export REGION=us-east-1 # For example u
-export NODE_ZONE="${REGION}b"
-#export Node_Zone=${REGION}a,${REGION}b,${REGION}c
-export MASTER_ZONE="${REGION}b"
-#export MASTER_ZONE=${REGION}a,${REGION}b,${REGION}c
-export NODE_COUNT=1
+export Node_Zone=${REGION}a,${REGION}b,${REGION}c
+export MASTER_ZONE=${REGION}a,${REGION}b,${REGION}c
+export NODE_COUNT=3
 export NODE_TYPE=t2.large
 export MASTER_TYPE=t2.large
 export AWS_DEFAULT_PROFILE=kops
-export KUBERNETES_VERSION="1.8.8"
-export SECURE_OS="ami-0073b07d"
+export KUBERNETES_VERSION="$VERSION"
+export SECURE_OS="$SECUREAMI"
 
 export STAGE=production
-export DNS_ZONE=solveblock.org # Change it to your domain
+export DNS_ZONE=$K8SNAME # Change it to your domain
 export DNS_ZONE_DASH=$(echo $DNS_ZONE | sed 's/\./-/g')
 export S3_BUCKET_PREFIX=$STAGE-$DNS_ZONE_DASH
 export NAME=$STAGE.$DNS_ZONE
