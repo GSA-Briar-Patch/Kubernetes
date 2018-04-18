@@ -142,9 +142,11 @@ function begin_cluster_plan {
     #    --bastion \
        # Configure terraform state
     
-    mkdir terraform/${STAGE}
-       
-    cd terraform/${STAGE}
+    mkdir terraform
+    cd terraform
+    mkdir ${STAGE}
+    cd ${STAGE}
+    
     cat << EOF > backend.tf
     terraform {
      backend "s3" {
