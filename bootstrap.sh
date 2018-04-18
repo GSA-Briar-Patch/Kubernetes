@@ -129,6 +129,7 @@ function begin_cluster_plan {
     --topology=private \
     --image=$SECURE_OS \
     --dns=Public \
+    --bastion \
     --networking=calico \
     --cloud-labels="${NAME}:billing=infra__mt__kubernetes,Environment=${STAGE}" \
     --ssh-public-key=${PUBKEY} \
