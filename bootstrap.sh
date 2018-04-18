@@ -124,6 +124,7 @@ function begin_cluster_plan {
     --node-count=$NODE_COUNT \
     --zones=$NODE_ZONE \
     --node-size=$NODE_TYPE \
+    --master-zones=$NODE_ZONE\
     --master-size=$MASTER_TYPE \
     --topology=private \
     --image=$SECURE_OS \
@@ -250,8 +251,8 @@ function cfg_cluster {
 }
 
 clean() {
-    cd terraform/${STAGE}
-    terraform destroy -force
+    #cd terraform/${STAGE}
+    #terraform destroy -force
     kops delete cluster $NAME --yes
     rm -rf $NAME.pem
     rm -rf "${PUBKEY}"
