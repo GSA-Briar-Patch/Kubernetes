@@ -141,6 +141,9 @@ function begin_cluster_plan {
     #    --target=terraform \
     #    --bastion \
        # Configure terraform state
+    
+    mkdir terraform/${STAGE}
+       
     cd terraform/${STAGE}
     cat << EOF > backend.tf
     terraform {
