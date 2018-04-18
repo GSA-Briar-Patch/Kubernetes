@@ -30,7 +30,7 @@ done
 
 # Environment values
 export REGION=us-east-1 # For example u
-export Node_Zone=${REGION}a,${REGION}b,${REGION}c
+export NODE_ZONE=${REGION}a,${REGION}b,${REGION}c
 export MASTER_ZONE=${REGION}a,${REGION}b,${REGION}c
 export NODE_COUNT=3
 export NODE_TYPE=t2.large
@@ -123,7 +123,6 @@ function begin_cluster_plan {
     --state=$KOPS_STATE_STORE \
     --node-count=$NODE_COUNT \
     --zones=$NODE_ZONE \
-    --master-zones=$MASTER_ZONE \
     --node-size=$NODE_TYPE \
     --master-size=$MASTER_TYPE \
     --topology=private \
