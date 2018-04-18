@@ -36,11 +36,11 @@ export NODE_COUNT=3
 export NODE_TYPE=t2.large
 export MASTER_TYPE=t2.large
 export AWS_DEFAULT_PROFILE=kops
-export KUBERNETES_VERSION="$VERSION"
-export SECURE_OS="$SECUREAMI"
+export KUBERNETES_VERSION="1.9.6"
+export SECURE_OS="ami-9e9231e1"
 
 export STAGE=production
-export DNS_ZONE=$K8SNAME # Change it to your domain
+export DNS_ZONE=helixviper.org # Change it to your domain
 export DNS_ZONE_DASH=$(echo $DNS_ZONE | sed 's/\./-/g')
 export S3_BUCKET_PREFIX=$STAGE-$DNS_ZONE_DASH
 export NAME=$STAGE.$DNS_ZONE
@@ -113,7 +113,7 @@ function create_new_keypair {
 
     ssh-keygen -t rsa -C ${NAME} -f ${NAME}.pem -N ''
     PUBKEY=$(pwd)/${NAME}.pem.pub
-    aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY} 
+    aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY}
     echo "### SSH Keys created and placed in AWS ###"
 }
 
