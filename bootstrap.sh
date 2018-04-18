@@ -75,13 +75,13 @@ function create_s3_buckets {
 
   #aws s3api create-bucket --bucket ${S3_NAME} --region ${REGION}
   # Create some buckets that hold our different kops, k8s and terraform state
-  aws s3api create-bucket --bucket ${S3_BUCKET_PREFIX}-kstate --region ${REGION} --profile kops
-  aws s3api create-bucket --bucket ${TF_STATE_STORE} --region ${REGION} --profile kops
-  aws s3api create-bucket --bucket ${K8S_CONFIG_STORE} --region ${REGION} --profile kops
+  aws s3api create-bucket --bucket ${S3_BUCKET_PREFIX}-kstate --region ${REGION} 
+  aws s3api create-bucket --bucket ${TF_STATE_STORE} --region ${REGION} 
+  aws s3api create-bucket --bucket ${K8S_CONFIG_STORE} --region ${REGION} 
 
-  aws s3api put-bucket-versioning --bucket ${S3_BUCKET_PREFIX}-kstate --versioning-configuration Status=Enabled --profile kops
-  aws s3api put-bucket-versioning --bucket ${TF_STATE_STORE} --versioning-configuration Status=Enabled --profile kops
-  aws s3api put-bucket-versioning --bucket ${K8S_CONFIG_STORE} --versioning-configuration Status=Enabled --profile kops
+  aws s3api put-bucket-versioning --bucket ${S3_BUCKET_PREFIX}-kstate --versioning-configuration Status=Enabled 
+  aws s3api put-bucket-versioning --bucket ${TF_STATE_STORE} --versioning-configuration Status=Enabled 
+  aws s3api put-bucket-versioning --bucket ${K8S_CONFIG_STORE} --versioning-configuration Status=Enabled 
 
   else
   echo "S3 bucket exists so deleting your stuff"
@@ -113,7 +113,7 @@ function create_new_keypair {
 
     ssh-keygen -t rsa -C ${NAME} -f ${NAME}.pem -N ''
     PUBKEY=$(pwd)/${NAME}.pem.pub
-    aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY} --profile kops
+    aws ec2 import-key-pair --key-name ${NAME} --public-key-material file://${PUBKEY} 
     echo "### SSH Keys created and placed in AWS ###"
 }
 
