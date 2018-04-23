@@ -245,7 +245,7 @@ waitForINSYNC() {
 function ssh_bastion {
   chmod 400 ${NAME}
   eval `ssh-agent -s`
-  ssh-add ${NAME}
+  ssh-add ${NAME}.pem
   bast_url=$(aws elb --output=table describe-load-balancers|grep DNSName.\*bastion|awk '{print $4}')
   echo ****************************
   echo ssh -A admin@`${bast_url}`
@@ -255,9 +255,11 @@ function ssh_bastion {
 function cfg_cluster {
    # Configure
   echo $KOPS_STATE_STORE
+  kops get $NAME -o yaml --state $KOPS_STATE_STORE > ${NAME}.yaml
    #kops update cluster production.styx.red --state=s3://${KOPS_STATE_STORE} --yes
   kops validate cluster --state=$KOPS_STATE_STORE
   kops rolling-update cluster $NAME --state=$KOPS_STATE_STORE --yes
+  
 
   
   #begin_cluster_terraform_build
