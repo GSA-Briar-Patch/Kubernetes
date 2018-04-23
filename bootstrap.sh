@@ -243,7 +243,7 @@ waitForINSYNC() {
 }
 
 function ssh_bastion {
-  chmod 400 ${NAME}
+  chmod 400 ${NAME}.pem
   eval `ssh-agent -s`
   ssh-add ${NAME}.pem
   bast_url=$(aws elb --output=table describe-load-balancers|grep DNSName.\*bastion|awk '{print $4}')
