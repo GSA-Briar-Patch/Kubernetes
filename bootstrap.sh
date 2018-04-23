@@ -136,13 +136,12 @@ function begin_cluster_plan {
     --out=terraform/${STAGE} \
     $NAME
 
-    #    --dns-zone=$DNS_ZONE \
-    #    --master-zones=$NODE_ZONE\
-    #    --image=$SECURE_OS \
-    #    Having problems with terraform and DNS
-    #    --out=terraform/${STAGE} \
-    #    --target=terraform \
-    #    --bastion \
+    #  --dns-zone=$DNS_ZONE \
+    #  --master-zones=$NODE_ZONE\
+    #  --image=$SECURE_OS \
+    #  Having problems with terraform and DNS
+    #  --out=terraform/${STAGE} \
+    #  --target=terraform \
        # Configure terraform state
     
     mkdir terraform
@@ -243,12 +242,24 @@ waitForINSYNC() {
 	done
 }
 
+function ssh_bastion {
+  chmod 400 ${NAME}
+  eval `ssh-agent -s`
+  ssh-add ${NAME}
+  bast_url=$(aws elb --output=table describe-load-balancers|grep DNSName.\*bastion|awk '{print $4}')
+  echo ****************************
+  echo ssh -A admin@`${bast_url}`
+  echo ****************************
+}
+
 function cfg_cluster {
    # Configure
   echo $KOPS_STATE_STORE
    #kops update cluster production.styx.red --state=s3://${KOPS_STATE_STORE} --yes
   kops validate cluster --state=$KOPS_STATE_STORE
   kops rolling-update cluster $NAME --state=$KOPS_STATE_STORE --yes
+
+  
   #begin_cluster_terraform_build
 }
 
@@ -348,6 +359,7 @@ case $choice in
 		create_new_keypair
 		begin_cluster_plan
 		begin_cluster_KOPS_build
+		ssh_bastion
 		# Having issue with terraform builds not configuring DNS*.
 		#begin_cluster_terraform_build
 		#begin_cluster_build
