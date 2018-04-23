@@ -33,7 +33,6 @@ export REGION=us-east-1 # For example u
 export NODE_ZONE=${REGION}a,${REGION}b
 #export NODE_ZONE=${REGION}a,${REGION}b,${REGION}c
 #export MASTER_ZONE=${REGION}a,${REGION}b,${REGION}c
-export MASTER_ZONE=${REGION}a
 export NODE_COUNT=2
 export NODE_TYPE=t2.large
 export MASTER_TYPE=t2.large
@@ -126,7 +125,6 @@ function begin_cluster_plan {
     --node-count=$NODE_COUNT \
     --zones=$NODE_ZONE \
     --node-size=$NODE_TYPE \
-    --master-zones=$NODE_ZONE\
     --master-size=$MASTER_TYPE \
     --topology=private \
     --dns=Public \
@@ -139,6 +137,7 @@ function begin_cluster_plan {
     $NAME
 
     #    --dns-zone=$DNS_ZONE \
+    #    --master-zones=$NODE_ZONE\
     #    --image=$SECURE_OS \
     #    Having problems with terraform and DNS
     #    --out=terraform/${STAGE} \
