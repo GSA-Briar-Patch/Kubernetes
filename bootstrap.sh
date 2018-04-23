@@ -36,8 +36,8 @@ export NODE_COUNT=3
 export NODE_TYPE=t2.large
 export MASTER_TYPE=t2.large
 export AWS_DEFAULT_PROFILE=kops
-export KUBERNETES_VERSION="1.9.6"
-export SECURE_OS="ami-9e9231e1"
+export KUBERNETES_VERSION="1.9.7"
+#export SECURE_OS="ami-9e9231e1"
 
 export STAGE=production
 export DNS_ZONE=helixviper.org # Change it to your domain
@@ -127,7 +127,6 @@ function begin_cluster_plan {
     --master-zones=$NODE_ZONE\
     --master-size=$MASTER_TYPE \
     --topology=private \
-    --image=$SECURE_OS \
     --dns=Public \
     --bastion \
     --networking=calico \
@@ -137,7 +136,8 @@ function begin_cluster_plan {
     --out=terraform/${STAGE} \
     $NAME
 
-    #        --dns-zone=$DNS_ZONE \
+    #    --dns-zone=$DNS_ZONE \
+    #    --image=$SECURE_OS \
     #    Having problems with terraform and DNS
     #    --out=terraform/${STAGE} \
     #    --target=terraform \
