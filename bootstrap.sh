@@ -30,9 +30,11 @@ done
 
 # Environment values
 export REGION=us-east-1 # For example u
-export NODE_ZONE=${REGION}a,${REGION}b,${REGION}c
-export MASTER_ZONE=${REGION}a,${REGION}b,${REGION}c
-export NODE_COUNT=3
+export NODE_ZONE=${REGION}a,${REGION}b
+#export NODE_ZONE=${REGION}a,${REGION}b,${REGION}c
+#export MASTER_ZONE=${REGION}a,${REGION}b,${REGION}c
+export MASTER_ZONE=${REGION}a
+export NODE_COUNT=2
 export NODE_TYPE=t2.large
 export MASTER_TYPE=t2.large
 export AWS_DEFAULT_PROFILE=kops
